@@ -1,0 +1,25 @@
+# TASTE Shot List — Cloudflare Worker config.  Deploy with:  npx wrangler deploy
+name = "taste-shot-list"
+main = "src/worker.js"
+compatibility_date = "2025-10-01"
+
+# The app itself (HTML, logo, font, brief content)
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# Shared checklist state: one Durable Object, same data for every phone
+[[durable_objects.bindings]]
+name = "BOARD"
+class_name = "Board"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Board"]
+
+[vars]
+# The crew types these on the sign-in screen. Change them here, then deploy again.
+APP_USER = "inhaus"
+APP_PASS = "2022"
+# Only needed to wipe every tick (see README).
+ADMIN_CODE = "bwfq62dcvm"

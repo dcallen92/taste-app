@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TASTE Shot List</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Shot List">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/icon-192.png">
+<link rel="preload" href="/fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Fredoka";src:url("/fonts/fredoka-latin.woff2") format("woff2");font-weight:400 700;font-display:swap}
+:root{
+  --teal:#16B890;--teal-d:#0E9A78;--teal-t:#DDF5EC;--teal-t2:#C4ECDD;
+  --ink:#0B0B0B;--ink2:#4B5350;--ink3:#8A938F;
+  --line:#DFE4E1;--bg:#fff;--soft:#F4F6F5;
+  --yellow:#FFDD2D;--yellow-t:#FFF6C2;
+  --purple:#7A3A88;--purple-t:#EBDDF2;
+  --red:#D93A2B;
+  --r:18px;
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.3 "Fredoka",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior-y:contain}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;text-align:left;touch-action:manipulation}
+.app{max-width:540px;margin:0 auto;min-height:100dvh;padding-bottom:calc(92px + var(--safe-b))}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;gap:12px;padding:calc(10px + var(--safe-t)) 16px 10px}
+.top img{height:46px;width:auto;display:block}
+.top .bar{width:2px;height:40px;background:var(--ink);border-radius:2px;flex:none}
+.top h1{margin:0;font-size:19px;line-height:1.05;font-weight:700;letter-spacing:.2px}
+.status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);text-align:right;line-height:1.15;max-width:38%}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--teal);flex:none}
+.status.warn .dot{background:var(--yellow);box-shadow:0 0 0 2px #0b0b0b22}
+.status.bad .dot{background:var(--red)}
+
+.pad{padding:0 16px}
+h2{font-size:21px;font-weight:700;margin:22px 0 10px}
+.sub{color:var(--ink2);font-size:14px}
+
+/* day pills */
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}
+.pill{height:46px;border-radius:999px;border:2px solid var(--line);font-weight:700;font-size:17px;text-align:center;background:#fff}
+.pill.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.pill .today{display:block;font-size:10px;letter-spacing:.8px;line-height:1;margin-top:-2px;opacity:.9}
+
+/* now / next */
+.now{background:var(--yellow);border-radius:var(--r);padding:14px 16px;display:flex;gap:12px;align-items:center}
+.now.idle{background:var(--yellow-t)}
+.now .k{font-size:14px;font-weight:700;letter-spacing:1px}
+.now .t{font-size:22px;font-weight:700;line-height:1.12;margin-top:2px}
+.now .s{font-size:14.5px;margin-top:3px;color:#3b3400}
+.now svg{width:52px;height:52px;flex:none;margin-left:auto}
+.next{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:var(--r);padding:11px 16px;margin-top:8px}
+.next .k{font-size:13.5px;color:var(--ink3);font-weight:600}
+.next .t{font-size:18px;font-weight:700}
+.next .in{margin-left:auto;font-size:13.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+
+details.sched{margin-top:8px;border:2px solid var(--line);border-radius:var(--r);overflow:hidden}
+details.sched summary{list-style:none;padding:12px 16px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer}
+details.sched summary::-webkit-details-marker{display:none}
+details.sched summary svg{width:20px;height:20px;margin-left:auto;transition:transform .15s}
+details.sched[open] summary svg{transform:rotate(180deg)}
+.srow{display:flex;gap:12px;padding:9px 16px;border-top:1px solid var(--line);font-size:15.5px}
+.srow b{width:74px;flex:none;font-weight:600;color:var(--ink2)}
+.srow.past{opacity:.45}
+.srow.cur{background:var(--yellow-t)}
+.srow small{color:var(--ink3);font-size:13px}
+
+/* crew */
+.crew{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chipc{border-radius:14px;padding:9px 10px;background:var(--teal-t);display:flex;gap:8px;align-items:center;min-width:0;border:2px solid transparent}
+.chipc.video{background:var(--purple-t)}
+.chipc.off{background:var(--soft);color:var(--ink3)}
+.chipc.me{border-color:var(--ink)}
+.chipc svg{width:26px;height:26px;flex:none}
+.chipc b{display:block;font-size:15px;font-weight:700;white-space:nowrap}
+.chipc span{display:block;font-size:12.5px;white-space:nowrap}
+.chipc em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.5px;display:block}
+
+/* progress overview */
+.ov{display:grid;gap:8px}
+.ovr{display:flex;align-items:center;gap:12px;width:100%;border:2px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.ovr .n{font-weight:700;font-size:16.5px;flex:none;width:96px}
+.ovr .c{font-size:14px;color:var(--ink2);flex:none;width:62px;text-align:right;font-weight:600}
+.bar{height:10px;border-radius:99px;background:#E3E7E5;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .25s}
+
+/* checklist rows */
+.rows{display:grid;gap:8px}
+.row{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;border:2px solid var(--line);border-radius:var(--r);padding:10px 12px 10px 14px;background:#fff}
+.row:active{background:var(--soft)}
+.ck{width:36px;height:36px;border-radius:50%;border:3px solid var(--ink);flex:none;display:grid;place-items:center}
+.ck svg{width:22px;height:22px;opacity:0}
+.done .ck{background:var(--teal);border-color:var(--teal)}
+.done .ck svg{opacity:1}
+.row .l{flex:1;min-width:0}
+.row .l b{display:block;font-size:17px;font-weight:600;line-height:1.2}
+.row .l span{display:block;font-size:14px;color:var(--ink2);margin-top:2px}
+.row.done .l b{color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1.5px}
+.tag{flex:none;background:var(--teal-t);color:#0b5b47;border-radius:9px;padding:4px 8px;font-size:12.5px;font-weight:700;text-align:center;line-height:1.15;white-space:nowrap}
+.tag.pend{background:var(--yellow-t);color:#5b4b00}
+.badge{font-style:normal;display:inline-block;border-radius:8px;padding:2px 8px;font-size:12.5px;font-weight:700;background:var(--yellow);color:var(--ink);margin-right:6px}
+.badge.vid{background:var(--purple-t);color:var(--purple)}
+.badge.past{background:var(--soft);color:var(--ink3)}
+
+/* chip grid (restaurants / exhibitors) */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{display:flex;align-items:center;gap:10px;min-height:56px;border:2px solid var(--line);border-radius:14px;padding:8px 10px;background:#fff;min-width:0;position:relative}
+.chip .ck{width:30px;height:30px;border-width:3px}
+.chip .ck svg{width:18px;height:18px}
+.chip .l{flex:1;min-width:0;font-size:15.5px;font-weight:600;line-height:1.15;overflow-wrap:anywhere}
+.chip .l small{display:block;font-size:11.5px;font-weight:600;opacity:.9;margin-top:1px}
+.chip.done{background:var(--teal);border-color:var(--teal);color:#fff}
+.chip.done .ck{background:#fff;border-color:#fff}
+.chip.done .ck svg path{stroke:var(--teal)}
+.chip.add{border-style:dashed;color:var(--ink2);justify-content:center;font-weight:600}
+.rm{position:absolute;top:-8px;right:-6px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:700;line-height:1}
+
+/* list screens */
+.banner{background:var(--teal);display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:12px}
+.banner svg{width:40px;height:40px;flex:none}
+.banner h2{margin:0;font-size:27px}
+.total{display:flex;justify-content:space-between;font-weight:700;font-size:17px;margin-bottom:6px}
+.total + .bar{height:13px;flex:none}
+.search{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:999px;padding:0 14px;height:48px;margin:14px 0 10px}
+.search svg{width:22px;height:22px;flex:none;color:var(--ink2)}
+.search input{flex:1;border:0;outline:0;background:none;font-size:17px;min-width:0;height:100%}
+.search input::-webkit-search-cancel-button{display:none;-webkit-appearance:none}
+.search button{font-size:22px;color:var(--ink3);padding:4px 6px;display:none}
+.search.has button{display:block}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.seg button{height:44px;border-radius:12px;background:var(--soft);font-weight:700;text-align:center;font-size:16px;border:2px solid var(--line)}
+.seg button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.sec{margin-bottom:10px}
+.sech{display:block;width:100%;background:var(--teal-t);border-radius:14px;padding:12px 14px 12px}
+.sech .r1{display:flex;align-items:center;gap:10px}
+.sech .ti{font-weight:700;font-size:16.5px;text-transform:uppercase;letter-spacing:.3px;flex:1;min-width:0}
+.sech .ct{font-weight:600;font-size:15px;flex:none}
+.sech svg{width:22px;height:22px;flex:none;transition:transform .15s}
+.sec.open .sech svg{transform:rotate(180deg)}
+.sech .bar{display:block;height:8px;margin-top:9px;background:#b9d9cd}
+.sech .bar i{background:var(--teal-d)}
+.sec.full .sech{background:var(--teal);color:#fff}
+.sec.full .sech .bar{background:#ffffff55}.sec.full .sech .bar i{background:#fff}
+.secb{padding:8px 0 4px;display:none}
+.sec.open .secb{display:block}
+.secn{font-size:14px;color:var(--ink2);margin:0 2px 8px}
+.empty{text-align:center;color:var(--ink2);padding:26px 10px;font-size:16px}
+.addrow{margin-top:8px;width:100%;min-height:50px;border:2px dashed var(--line);border-radius:14px;text-align:center;font-weight:600;color:var(--ink2)}
+
+/* brief */
+.card{border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:8px}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:700}
+.card p{margin:0;font-size:15.5px;color:#2a2f2d;line-height:1.35}
+.card.y{background:var(--yellow-t);border-color:var(--yellow)}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line);font-size:15.5px;line-height:1.35}
+.rule:first-child{border-top:0}
+.rule i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-style:normal;font-weight:700;font-size:14px;display:grid;place-items:center}
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th,.tbl td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+.tbl th{font-weight:700;border-top:0;font-size:13px;color:var(--ink2)}
+.btn{display:block;width:100%;height:52px;border-radius:14px;background:var(--ink);color:#fff;font-weight:700;text-align:center;font-size:17px;margin-top:8px}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn.teal{background:var(--teal)}
+.me{display:flex;align-items:center;gap:12px}
+.me .av{width:46px;height:46px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:2px solid var(--line);padding:8px 10px calc(8px + var(--safe-b))}
+.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tab{height:62px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:600;font-size:14px}
+.tab svg{width:27px;height:27px}
+.tab.on{background:var(--teal)}
+.tab u{text-decoration:none;position:relative}
+
+/* toast + sheets */
+#toast{position:fixed;left:50%;bottom:calc(98px + var(--safe-b));transform:translate(-50%,20px);background:var(--ink);color:#fff;border-radius:14px;padding:10px 12px 10px 16px;display:flex;align-items:center;gap:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:40;max-width:92vw;white-space:nowrap}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{background:var(--yellow);color:var(--ink);border-radius:9px;padding:7px 12px;font-weight:700}
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(11,11,11,.55);display:none;align-items:flex-end;justify-content:center}
+.sheet.show{display:flex}
+.sheet .box{background:#fff;width:100%;max-width:540px;border-radius:24px 24px 0 0;padding:22px 18px calc(22px + var(--safe-b));max-height:94dvh;overflow:auto}
+.sheet h2{margin:0 0 4px;font-size:24px}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.role{min-height:68px;border:2px solid var(--line);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;line-height:1.1}
+.role svg{width:28px;height:28px;flex:none}
+.role.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.field{display:block;width:100%;height:52px;border:2px solid var(--line);border-radius:14px;padding:0 14px;font-size:17px;outline:0}
+.field:focus{border-color:var(--teal)}
+@media (max-width:359px){.top img{height:38px}.top h1{font-size:16px}.chipc svg{display:none}.row .l b{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <img src="/logo.png" alt="Taste Abu Dhabi Festival" width="520" height="293">
+    <span class="bar"></span>
+    <h1>TASTE<br>Shot List</h1>
+    <div class="status" id="status" role="status"><span class="dot"></span><span id="statusText">Connecting…</span></div>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" aria-label="Sections"><div class="in" id="tabs"></div></nav>
+<div id="toast" role="status"><span id="toastText"></span><button id="toastUndo" type="button">Undo</button></div>
+<div class="sheet" id="sheet"><div class="box" id="sheetBox"></div></div>
+
+<script src="/data.js"></script>
+<script>
+(() => {
+"use strict";
+const B = window.BRIEF;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem("tsl." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("tsl." + k, JSON.stringify(v)); } catch (e) {} },
+};
+const slug = s => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/* ---------- icons ---------- */
+const svg = (d, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
+const IC = {
+  today: svg('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M13.5 14H16M8 17h3"/>'),
+  marketing: svg('<path d="M4 10v4a1 1 0 0 0 1 1h2l8 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M8 15.5 9.5 20h2.2"/><path d="M18.5 9.5a3.5 3.5 0 0 1 0 5"/>'),
+  sales: svg('<path d="M4 10.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8.5"/><path d="M3 9l1.8-5h14.4L21 9a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M9.5 20v-5h5v5"/>'),
+  brief: svg('<rect x="5" y="4.5" width="14" height="16" rx="2.5"/><path d="M9 4.5V3.5h6v1"/><path d="M9 10h6M9 13.5h6M9 17h3.5"/>'),
+  camera: svg('<path d="M4 8.5h3l1.5-2.5h7L17 8.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.500a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/>'),
+  video: svg('<rect x="3" y="6.500" width="12.500" height="11" rx="2.500"/><path d="M15.500 10.500 21 7.500v9l-5.500-3z"/>'),
+  team: svg('<circle cx="9" cy="8.500" r="3.200"/><path d="M3 19.500c.6-3.300 3-5 6-5s5.400 1.700 6 5"/><circle cx="17" cy="9.500" r="2.400"/><path d="M16.500 14.600c2.400.2 4 1.700 4.500 4.400"/>'),
+  search: svg('<circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/>'),
+  chev: svg('<path d="m6 9 6 6 6-6"/>', 'stroke-width="2.6"'),
+  check: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5.500 12.500 4.300 4.300L18.500 8" stroke="#fff" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  chef: svg('<path d="M7 13.500a4 4 0 1 1 1.700-7.600 4.200 4.200 0 0 1 6.600 0A4 4 0 1 1 17 13.500V19a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1z"/><path d="M7.500 16.500h9"/>', 'stroke-width="1.800"'),
+};
+
+/* ---------- lists ---------- */
+const build = (key, secs) => secs.map(s => {
+  const id = key + "/" + slug(s.title);
+  return { ...s, id, items: s.items.map(l => ({ id: id + "/" + slug(l), label: l })) };
+});
+const LISTS = { marketing: build("m", B.marketing), sales: build("s", B.sales) };
+const LIST_TITLE = { marketing: "Marketing shots", sales: "Sales shots" };
+const sections = key => LISTS[key].map(s => ({ ...s, items: s.items.concat(S.extras.filter(x => x.sec === s.id).map(x => ({ id: x.id, label: x.label, extra: true }))) }));
+
+/* ---------- state ---------- */
+const cache = LS.get("cache", { v: null, ticks: {}, extras: [] });
+const S = {
+  tab: LS.get("tab", "today"), day: null,
+  filter: LS.get("filter", { marketing: "todo", sales: "todo" }),
+  q: { marketing: "", sales: "" },
+  open: LS.get("open", null) || { [LISTS.marketing[0].id]: true, [LISTS.sales[0].id]: true },
+  v: cache.v, ticks: cache.ticks || {}, extras: cache.extras || [],
+  lastSync: 0, online: true, auth: true, skew: 0, frame: null,
+};
+let queue = LS.get("queue", []);
+let me = LS.get("me", null);
+let auth = LS.get("auth", "");          // "user:password", sent with every request
+const sticky = new Set();   // items just toggled stay visible under the current filter
+
+const roleOf = k => B.roles.find(r => r.key === k) || B.roles[3];
+const initials = n => (n || "").trim().split(/\s+/).map(w => w[0]).join("").slice(0, 3).toUpperCase();
+const whoShort = t => (t.by === "TEAM" ? (initials(t.name) || "TEAM") : t.by || "?");
+const whoLong = t => roleOf(t.by).label + (t.name ? " (" + t.name + ")" : "");
+
+function eff() {
+  const t = Object.assign({}, S.ticks);
+  for (const op of queue) { if (op.done) t[op.id] = { by: op.by, name: op.name, at: op.at, pending: true }; else delete t[op.id]; }
+  return t;
+}
+
+/* ---------- time (always Abu Dhabi time) ---------- */
+const nowMs = () => Date.now() + S.skew;
+const partsFmt = new Intl.DateTimeFormat("en-CA", { timeZone: B.tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+function local(ms) {
+  const p = {}; for (const x of partsFmt.formatToParts(new Date(ms))) p[x.type] = x.value;
+  return { date: `${p.year}-${p.month}-${p.day}`, min: (+p.hour % 24) * 60 + +p.minute };
+}
+const fmtMin = m => { const h = Math.floor(m / 60) % 24, mm = m % 60; return `${h % 12 || 12}:${String(mm).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`; };
+const fmtShort = m => { const h = Math.floor(m / 60) % 24, mm = m % 60; return `${h % 12 || 12}:${String(mm).padStart(2, "0")}`; };
+function fmtTick(at) {
+  const a = local(at), n = local(nowMs());
+  const d = B.days.find(x => x.date === a.date);
+  return (a.date === n.date ? "" : (d ? d.label.slice(0, 3) : a.date.slice(5)) + " ") + fmtMin(a.min);
+}
+const mins = n => n >= 60 ? `${Math.floor(n / 60)} h ${n % 60 ? (n % 60) + " min" : ""}`.trim() : `${n} min`;
+const minsC = n => n >= 60 ? `${Math.floor(n / 60)}H${n % 60 ? " " + (n % 60) + "M" : ""}` : `${n} MIN`;
+const todayKey = () => { const n = local(nowMs()); const d = B.days.find(x => x.date === n.date); return d ? d.key : null; };
+S.day = todayKey() || B.days[0].key;
+
+/* ---------- sync ---------- */
+async function api(path, body) {
+  const r = await fetch(path, { method: body ? "POST" : "GET", cache: "no-store", headers: { "content-type": "application/json", "x-auth": auth || "" }, body: body ? JSON.stringify(body) : undefined });
+  if (r.status === 401) { S.auth = false; throw new Error("sign in"); }
+  if (!r.ok) throw new Error("http " + r.status);
+  S.auth = true;
+  return r.json();
+}
+function accept(d) {
+  S.lastSync = Date.now(); S.online = true;
+  if (typeof d.now === "number") S.skew = Math.abs(d.now - Date.now()) > 90000 ? d.now - Date.now() : 0;
+  if (d.same) return false;
+  S.v = d.v; S.ticks = d.ticks || {}; S.extras = d.extras || [];
+  LS.set("cache", { v: S.v, ticks: S.ticks, extras: S.extras });
+  return true;
+}
+let busy = false;
+async function sync() {
+  if (busy) return; busy = true;
+  let again = false;
+  try {
+    if (queue.length) {
+      const sending = queue.slice();
+      const d = await api("/api/tick", { ops: sending });
+      queue = queue.slice(sending.length); LS.set("queue", queue);
+      accept(d); render(); again = queue.length > 0;
+    } else {
+      const d = await api("/api/state" + (S.v != null ? "?since=" + S.v : ""));
+      if (accept(d)) render();
+    }
+  } catch (e) { S.online = false; if (!S.auth && !gateOpen) gate(); }
+  busy = false; paintStatus();
+  if (again) sync();
+}
+function paintStatus() {
+  const el = $("#status"), tx = $("#statusText");
+  const ago = S.lastSync ? Math.max(0, Math.round((Date.now() - S.lastSync) / 1000)) : null;
+  let cls = "", text;
+  if (!auth || !S.auth) { cls = "bad"; text = "Sign in needed"; }
+  else if (!S.online || (ago !== null && ago > 75)) { cls = queue.length ? "bad" : "warn"; text = queue.length ? `Offline · ${queue.length} to send` : "Offline · showing last saved"; }
+  else if (queue.length) { cls = "warn"; text = `Sending ${queue.length}…`; }
+  else if (ago === null) { cls = "warn"; text = "Connecting…"; }
+  else text = ago < 5 ? "Synced just now" : ago < 60 ? `Synced ${ago} s ago` : "Synced 1 min ago";
+  el.className = "status " + cls; tx.textContent = text;
+}
+
+/* ---------- actions ---------- */
+function pushOp(id, done) {
+  const op = done ? { id, done: true, by: me.role, name: me.name, at: nowMs() } : { id, done: false, at: nowMs() };
+  queue.push(op); LS.set("queue", queue); sticky.add(id);
+}
+function toggle(id, label) {
+  if (!me) return askWho();
+  const cur = eff()[id];
+  if (cur) {
+    const mineJustNow = cur.by === me.role && (cur.name || "") === (me.name || "") && nowMs() - cur.at < 60000;
+    if (!mineJustNow && !confirm(`Untick "${label}"?\n\nMarked done by ${whoLong(cur)} at ${fmtTick(cur.at)}.`)) return;
+  }
+  pushOp(id, !cur);
+  if (navigator.vibrate) navigator.vibrate(12);
+  render(); paintStatus();
+  toast(cur ? "Unticked" : "Marked done", () => { pushOp(id, !!cur); render(); paintStatus(); sync(); });
+  sync();
+}
+let toastTimer, toastUndo;
+function toast(text, undo) {
+  $("#toastText").textContent = text; toastUndo = undo;
+  $("#toastUndo").style.display = undo ? "" : "none";
+  $("#toast").classList.add("show"); clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("#toast").classList.remove("show"), 3500);
+}
+$("#toastUndo").addEventListener("click", () => { $("#toast").classList.remove("show"); if (toastUndo) toastUndo(); toastUndo = null; });
+
+async function addExtra(secId, kind) {
+  if (!me) return askWho();
+  const label = (prompt(`Add ${kind} to this list (everyone will see it):`) || "").trim();
+  if (!label) return;
+  try { accept(await api("/api/extra", { sec: secId, label, by: me.role, name: me.name })); sticky.clear(); render(); toast("Added for everyone"); }
+  catch (e) { alert("Could not add it — no connection. Try again when you are back online."); }
+  paintStatus();
+}
+async function removeExtra(id, label) {
+  if (!confirm(`Remove "${label}" from the list for everyone?`)) return;
+  try { accept(await api("/api/extra/remove", { id })); render(); } catch (e) { alert("Could not remove it — no connection."); }
+  paintStatus();
+}
+
+/* ---------- pieces ---------- */
+const tagHtml = t => t ? `<span class="tag${t.pending ? " pend" : ""}">${esc(whoShort(t))}<br>${esc(fmtTick(t.at))}</span>` : "";
+function rowHtml(it, t, sub) {
+  return `<button type="button" class="row${t ? " done" : ""}" data-act="tick" data-id="${esc(it.id)}" data-label="${esc(it.label)}" aria-pressed="${t ? "true" : "false"}">
+    <span class="ck">${IC.check}</span><span class="l"><b>${esc(it.label)}</b>${sub ? `<span>${sub}</span>` : ""}</span>${tagHtml(t)}</button>`;
+}
+function chipHtml(it, t) {
+  return `<button type="button" class="chip${t ? " done" : ""}" data-act="tick" data-id="${esc(it.id)}" data-label="${esc(it.label)}" aria-pressed="${t ? "true" : "false"}">
+    <span class="ck">${IC.check}</span><span class="l">${esc(it.label)}${t ? `<small>${esc(whoShort(t))} · ${esc(fmtTick(t.at))}</small>` : ""}</span>
+    ${it.extra && !t ? `<span class="rm" data-act="rm" data-id="${esc(it.id)}" data-label="${esc(it.label)}" role="button" aria-label="Remove">×</span>` : ""}</button>`;
+}
+const count = (key, E) => { let d = 0, n = 0; for (const s of sections(key)) for (const it of s.items) { n++; if (E[it.id]) d++; } return [d, n]; };
+const pct = (d, n) => n ? Math.round(100 * d / n) : 0;
+
+/* ---------- TODAY ---------- */
+function viewToday() {
+  const E = eff(), n = local(nowMs()), tKey = todayKey(), isToday = S.day === tKey, day = B.days.find(d => d.key === S.day);
+  let h = `<div class="pad"><div class="days">${B.days.map(d => `<button type="button" class="pill${d.key === S.day ? " on" : ""}" data-act="day" data-day="${d.key}">${d.label}${d.key === tKey ? '<span class="today">TODAY</span>' : ""}</button>`).join("")}</div>`;
+
+  const hub = B.chefsHub[S.day] || [];
+  if (isToday) {
+    const cur = hub.find(s => n.min >= s[0] && n.min < s[0] + 30), nxt = hub.find(s => s[0] > n.min);
+    if (cur) h += `<div class="now"><div><div class="k">ON NOW · CHEF'S HUB</div><div class="t">${esc(cur[1])}</div><div class="s">${fmtMin(cur[0])} – ${fmtMin(cur[0] + 30)}${cur[2] ? " · " + esc(cur[2]) : ""} · ${mins(cur[0] + 30 - n.min)} left</div></div>${IC.chef}</div>`;
+    else h += `<div class="now idle"><div><div class="k">CHEF'S HUB</div><div class="t">${nxt ? "Nothing on right now" : hub.length && n.min >= hub[hub.length - 1][0] + 30 ? "Sessions finished for today" : "Nothing on right now"}</div></div>${IC.chef}</div>`;
+    if (nxt) h += `<div class="next"><div><div class="k">Next up</div><div class="t">${fmtMin(nxt[0])} ${esc(nxt[1])}</div></div><span class="in">in ${mins(nxt[0] - n.min)}</span></div>`;
+  }
+  h += `<details class="sched"${isToday ? "" : " open"}><summary>${isToday ? "Full Chef's Hub schedule" : "Chef's Hub · " + esc(day.long)}${IC.chev}</summary>${hub.map(s => `<div class="srow${isToday && n.min >= s[0] + 30 ? " past" : ""}${isToday && n.min >= s[0] && n.min < s[0] + 30 ? " cur" : ""}"><b>${fmtMin(s[0])}</b><span>${esc(s[1])}${s[2] ? ` <small>· ${esc(s[2])}</small>` : ""}</span></div>`).join("")}</details>`;
+
+  const crew = B.crew[S.day] || [];
+  h += `<h2>Crew ${isToday ? "on shift" : "schedule"}</h2><div class="crew">${crew.map(c => {
+    const r = roleOf(c.role); let st = "", off = false;
+    if (isToday) { if (n.min < c.from) st = "IN " + minsC(c.from - n.min); else if (n.min < c.to) st = "ON NOW"; else { st = "FINISHED"; off = true; } }
+    return `<div class="chipc ${r.kind}${off ? " off" : ""}${me && me.role === c.role ? " me" : ""}">${r.kind === "video" ? IC.video : IC.camera}<div><b>${esc(r.short)}</b><span>${fmtShort(c.from)}–${fmtShort(c.to)}</span>${st ? `<em>${st}</em>` : ""}</div></div>`;
+  }).join("")}</div>`;
+
+  const quick = B.quick[S.day] || [];
+  const qd = quick.filter(q => E[q.id]).length;
+  h += `<h2>Quick turnaround${quick.length ? ` <span class="sub">${qd}/${quick.length}</span>` : ""}</h2>`;
+  if (!quick.length) h += `<div class="card"><p>No quick-turnaround items are listed for ${esc(day.long.split(",")[0])}. Keep working through Marketing and Sales.</p></div>`;
+  else {
+    h += `<div class="card y"><p>${esc(B.quickNote)}</p></div><div class="rows">`;
+    for (const q of quick) {
+      const t = E[q.id]; let badge = "";
+      if (q.at && isToday && !t) {
+        if (n.min >= q.at[0] && n.min < q.at[1]) badge = `<i class="badge">NOW</i>`;
+        else if (n.min < q.at[0] && q.at[0] - n.min <= 60) badge = `<i class="badge">in ${mins(q.at[0] - n.min)}</i>`;
+        else if (n.min >= q.at[1]) badge = `<i class="badge past">time passed</i>`;
+      }
+      if (q.video) badge += `<i class="badge vid">VIDEO TOO</i>`;
+      const sub = (badge || q.when) ? `${badge.replace(/<i /g, '<i style="font-style:normal" ')}${esc(q.when || "")}` : "";
+      h += rowHtml(q, t, sub);
+    }
+    h += `</div>`;
+  }
+
+  const [md, mn] = count("marketing", E), [sd, sn] = count("sales", E);
+  h += `<h2>Whole event</h2><div class="ov">
+    <button type="button" class="ovr" data-act="tab" data-tab="marketing"><span class="n">Marketing</span><span class="bar"><i style="width:${pct(md, mn)}%"></i></span><span class="c">${md}/${mn}</span></button>
+    <button type="button" class="ovr" data-act="tab" data-tab="sales"><span class="n">Sales</span><span class="bar"><i style="width:${pct(sd, sn)}%"></i></span><span class="c">${sd}/${sn}</span></button></div>
+    <div class="card y" style="margin-top:14px"><h3>Remember</h3><p>${esc(B.outputs.notes[1])}</p></div></div>`;
+  return h;
+}
+
+/* ---------- MARKETING / SALES ---------- */
+function frameList(key) {
+  return `<div class="banner">${IC[key]}<h2>${LIST_TITLE[key]}</h2></div><div class="pad">
+    <div class="total"><span id="totN"></span><span id="totP"></span></div><div class="bar"><i id="totB"></i></div>
+    <label class="search" id="searchBox">${IC.search}<input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Search shots…" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(S.q[key])}"><button type="button" data-act="clearq" aria-label="Clear search">×</button></label>
+    <div class="seg" id="seg">${[["todo", "To do"], ["done", "Done"], ["all", "All"]].map(([k, l]) => `<button type="button" data-act="filter" data-f="${k}">${l}</button>`).join("")}</div>
+    <div id="list"></div></div>`;
+}
+function paintList(key) {
+  const E = eff(), f = S.filter[key], q = S.q[key].trim().toLowerCase();
+  const [d, n] = count(key, E);
+  $("#totN").textContent = `${d} of ${n} done`; $("#totP").textContent = pct(d, n) + "%"; $("#totB").style.width = pct(d, n) + "%";
+  for (const b of $("#seg").children) b.classList.toggle("on", b.dataset.f === f);
+  $("#searchBox").classList.toggle("has", !!S.q[key]);
+  let h = "", shown = 0;
+  for (const s of sections(key)) {
+    const done = s.items.filter(it => E[it.id]).length;
+    const secHit = q && s.title.toLowerCase().includes(q);
+    const items = s.items.filter(it => {
+      if (q && !secHit && !it.label.toLowerCase().includes(q)) return false;
+      if (sticky.has(it.id)) return true;
+      return f === "all" || (f === "done") === !!E[it.id];
+    });
+    if (q && !items.length) continue;
+    if (f === "done" && !items.length && !q) continue;
+    shown += items.length;
+    const open = q ? true : !!S.open[s.id];
+    const full = done === s.items.length;
+    h += `<section class="sec${open ? " open" : ""}${full ? " full" : ""}">
+      <button type="button" class="sech" data-act="sec" data-id="${esc(s.id)}" aria-expanded="${open}"><span class="r1"><span class="ti">${esc(s.title)}</span><span class="ct">${full ? "✓ " : ""}${done}/${s.items.length}</span>${IC.chev}</span><span class="bar"><i style="width:${pct(done, s.items.length)}%"></i></span></button>
+      <div class="secb">${s.note ? `<p class="secn">${esc(s.note)}</p>` : ""}`;
+    if (!items.length) h += `<p class="empty">${f === "todo" ? "All done here 🎉" : "Nothing here yet"}</p>`;
+    else if (s.grid) h += `<div class="grid">${items.map(it => chipHtml(it, E[it.id])).join("")}${s.add && f !== "done" && !q ? `<button type="button" class="chip add" data-act="add" data-id="${esc(s.id)}" data-kind="an exhibitor">+ Add exhibitor</button>` : ""}</div>`;
+    else h += `<div class="rows">${items.map(it => rowHtml(it, E[it.id])).join("")}</div>`;
+    if (s.grid && s.add && !items.length && f !== "done" && !q) h += `<button type="button" class="addrow" data-act="add" data-id="${esc(s.id)}" data-kind="an exhibitor">+ Add exhibitor</button>`;
+    h += `</div></section>`;
+  }
+  if (!h || (q && !shown)) h = `<p class="empty">${q ? `No shots match “${esc(S.q[key])}”${f !== "all" ? ' in this filter. Try “All”.' : "."}` : f === "done" ? "Nothing ticked yet." : "Nothing to show."}</p>`;
+  $("#list").innerHTML = h;
+}
+
+/* ---------- BRIEF ---------- */
+function viewBrief() {
+  const o = B.outputs;
+  let h = `<div class="pad"><h2 style="margin-top:8px">You</h2><div class="card"><div class="me"><span class="av">${esc(me ? whoShort({ by: me.role, name: me.name }) : "?")}</span><div style="flex:1;min-width:0"><b>${esc(me ? roleOf(me.role).label : "Not set")}</b><div class="sub">${esc(me && me.name ? me.name : "Your ticks are tagged with this")}</div></div></div>
+    <button type="button" class="btn ghost" data-act="who">Change role or name</button><button type="button" class="btn" data-act="share">Share app link with the team</button><button type="button" class="btn ghost" data-act="signout" style="margin-top:8px">Sign out of this phone</button></div>`;
+  h += `<h2>Video outputs</h2>${o.video.map(v => `<div class="card"><h3>${esc(v.title)}</h3><p>${esc(v.text)}</p></div>`).join("")}`;
+  h += `<h2>Photo rules</h2><div class="card">${o.photo.map((p, i) => `<div class="rule"><i>${i + 1}</i><span>${esc(p)}</span></div>`).join("")}</div>`;
+  h += `<h2>Notes</h2>${o.notes.map(p => `<div class="card y"><p>${esc(p)}</p></div>`).join("")}`;
+  h += `<h2>Crew schedule</h2><div class="card"><table class="tbl"><tr><th></th>${B.roles.slice(0, 3).map(r => `<th>${esc(r.short)}</th>`).join("")}</tr>${B.days.map(d => `<tr><td><b>${d.label}</b></td>${B.roles.slice(0, 3).map(r => { const c = (B.crew[d.key] || []).find(x => x.role === r.key); return `<td>${c ? fmtShort(c.from) + "–" + fmtShort(c.to) + " PM" : "—"}</td>`; }).join("")}</tr>`).join("")}</table></div>`;
+  h += `<h2>Chef's Hub schedule</h2>${B.days.map(d => `<details class="sched" style="margin-bottom:8px"><summary>${esc(d.long)}${IC.chev}</summary>${(B.chefsHub[d.key] || []).map(s => `<div class="srow"><b>${fmtMin(s[0])}</b><span>${esc(s[1])}${s[2] ? ` <small>· ${esc(s[2])}</small>` : ""}</span></div>`).join("")}</details>`).join("")}`;
+  h += `<p class="sub" style="margin:18px 2px">Tip: add this page to your home screen (Share → Add to Home Screen) so it opens like an app. Ticks made with no signal are saved on the phone and sent when you are back online.</p></div>`;
+  return h;
+}
+
+/* ---------- render ---------- */
+function paintTabs() {
+  const E = eff();
+  $("#tabs").innerHTML = [["today", "Today"], ["marketing", "Marketing"], ["sales", "Sales"], ["brief", "Brief"]].map(([k, l]) =>
+    `<button type="button" class="tab${S.tab === k ? " on" : ""}" data-act="tab" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${IC[k]}<u>${l}</u></button>`).join("");
+}
+function render() {
+  const view = $("#view");
+  if (S.tab === "marketing" || S.tab === "sales") {
+    if (S.frame !== S.tab) { view.innerHTML = frameList(S.tab); S.frame = S.tab; }
+    paintList(S.tab);
+  } else { S.frame = null; view.innerHTML = S.tab === "brief" ? viewBrief() : viewToday(); }
+  paintTabs();
+}
+function go(tab) { S.tab = tab; LS.set("tab", tab); sticky.clear(); render(); window.scrollTo(0, 0); }
+
+/* ---------- who / team sheets ---------- */
+function askWho() {
+  let role = me ? me.role : null;
+  const box = $("#sheetBox");
+  const paint = () => {
+    box.innerHTML = `<h2>Who are you?</h2><p class="sub">Your ticks are tagged with this so the team knows who got the shot.</p>
+      <div class="roles">${B.roles.map(r => `<button type="button" class="role${role === r.key ? " on" : ""}" data-role="${r.key}">${r.kind === "video" ? IC.video : r.kind === "team" ? IC.team : IC.camera}<span>${esc(r.label)}</span></button>`).join("")}</div>
+      <input class="field" id="whoName" placeholder="Your first name" maxlength="30" autocomplete="given-name" value="${esc(me && me.name || "")}">
+      <button type="button" class="btn teal" id="whoGo">Start</button>`;
+    for (const b of box.querySelectorAll(".role")) b.onclick = () => { const keep = $("#whoName").value; role = b.dataset.role; paint(); $("#whoName").value = keep; };
+    $("#whoGo").onclick = () => {
+      const name = $("#whoName").value.trim();
+      if (!role) return alert("Pick your role first.");
+      if (role === "TEAM" && !name) return alert("Add your name so the team knows who ticked.");
+      me = { role, name }; LS.set("me", me); $("#sheet").classList.remove("show"); render();
+    };
+  };
+  paint(); $("#sheet").classList.add("show");
+}
+let gateOpen = false;
+function gate(msg, keepUser) {
+  const box = $("#sheetBox");
+  const [u0, p0] = keepUser != null ? [keepUser, ""] : (auth || "").split(":");
+  box.innerHTML = `<h2>Sign in</h2><p class="sub">${msg ? esc(msg) : "This checklist is for the Taste crew. Use the login shared in the team chat."}</p>
+    <input class="field" id="inU" placeholder="Username" autocapitalize="off" autocorrect="off" autocomplete="username" spellcheck="false" style="margin-top:14px" value="${esc(u0 || "")}">
+    <input class="field" id="inP" type="password" placeholder="Password" autocapitalize="off" autocomplete="current-password" style="margin-top:8px" value="${esc(p0 || "")}">
+    <button type="button" class="btn teal" id="inGo">Open checklist</button>`;
+  const go = async () => {
+    const u = $("#inU").value.trim(), pw = $("#inP").value;
+    if (!u || !pw) return gate("Type the username and password.");
+    const btn = $("#inGo"); btn.textContent = "Checking…"; btn.disabled = true;
+    const prev = auth; auth = u + ":" + pw;
+    try {
+      accept(await api("/api/state"));
+      LS.set("auth", auth); gateOpen = false; $("#sheet").classList.remove("show");
+      render(); paintStatus(); if (!me) askWho();
+    } catch (e) {
+      auth = prev;
+      gate(S.auth === false ? "That username or password is not right. Try again." : "No connection. Check your signal and try again.", u);
+      $("#inP").focus();
+    }
+  };
+  $("#inGo").onclick = go;
+  $("#inP").onkeydown = e => { if (e.key === "Enter") go(); };
+  $("#sheet").classList.add("show"); gateOpen = true;
+}
+async function share() {
+  const url = location.origin + "/";
+  const text = "TASTE Shot List — crew checklist. Username and password are in the team chat.";
+  try { if (navigator.share) { await navigator.share({ title: "TASTE Shot List", text, url }); return; } } catch (e) { return; }
+  try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch (e) { prompt("Copy this link:", url); }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act;
+  if (a === "rm") { e.stopPropagation(); return removeExtra(el.dataset.id, el.dataset.label); }
+  if (a === "tick") return toggle(el.dataset.id, el.dataset.label);
+  if (a === "tab") return go(el.dataset.tab);
+  if (a === "day") { S.day = el.dataset.day; return render(); }
+  if (a === "filter") { S.filter[S.tab] = el.dataset.f; LS.set("filter", S.filter); sticky.clear(); return paintList(S.tab); }
+  if (a === "sec") { S.open[el.dataset.id] = !S.open[el.dataset.id]; LS.set("open", S.open); return paintList(S.tab); }
+  if (a === "clearq") { S.q[S.tab] = ""; $("#q").value = ""; sticky.clear(); paintList(S.tab); return $("#q").focus(); }
+  if (a === "add") return addExtra(el.dataset.id, el.dataset.kind);
+  if (a === "who") return askWho();
+  if (a === "share") return share();
+  if (a === "signout") {
+    if (queue.length && !confirm(queue.length + " tick(s) have not been sent yet. Sign out anyway?")) return;
+    if (!confirm("Sign out on this phone? You will need the username and password again.")) return;
+    auth = ""; LS.set("auth", ""); S.auth = true; return gate();
+  }
+});
+document.addEventListener("input", e => { if (e.target.id === "q") { S.q[S.tab] = e.target.value; sticky.clear(); paintList(S.tab); } });
+document.addEventListener("keydown", e => { if (e.target.id === "q" && e.key === "Enter") e.target.blur(); });
+
+/* ---------- boot ---------- */
+render(); paintStatus();
+if (!auth) gate(); else { if (!me) askWho(); sync(); }
+setInterval(() => { if (auth && document.visibilityState === "visible") sync(); }, 20000);         // pull the team's ticks every 20 s
+setInterval(paintStatus, 5000);
+setInterval(() => { if (S.tab === "today" && document.visibilityState === "visible" && !$("#sheet").classList.contains("show")) render(); }, 30000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { if (auth) sync(); if (S.tab === "today") render(); } });
+window.addEventListener("online", () => { if (auth) sync(); });
+window.addEventListener("focus", () => { if (auth) sync(); });
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("/sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
