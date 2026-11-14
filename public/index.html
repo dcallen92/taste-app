@@ -209,36 +209,58 @@ details.sched[open] summary svg{transform:rotate(180deg)}
 .secloc{display:flex;align-items:center;gap:6px;width:100%;min-height:44px;border-radius:12px;background:var(--soft);border:1.5px solid var(--line);padding:0 12px;font-weight:600;font-size:14.5px;margin-bottom:8px}
 .secloc svg{width:18px;height:18px}
 
-/* venue map */
-.mapv{position:relative;overflow:hidden;border-radius:var(--r);border:2px solid var(--line);background:#ECEDEE;height:min(58dvh,125vw);touch-action:none;user-select:none;-webkit-user-select:none}
+/* venue map (full-screen, overlays float on top) */
+.app.maptab{padding-bottom:0}
+.mapv{position:relative;overflow:hidden;background:#ECEDEE;height:60dvh;touch-action:none;user-select:none;-webkit-user-select:none}
 .mapi{position:absolute;left:0;top:0;width:100%;transform-origin:0 0;will-change:transform}
 .mapi.anim{transition:transform .38s cubic-bezier(.2,.7,.2,1)}
-.mapi img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none}
-.mpin{position:absolute;width:0;height:0;transform:scale(var(--inv,1))}
-.mpin i{position:absolute;left:-17px;top:-42px;width:34px;height:34px;border-radius:50% 50% 50% 0;background:var(--c);transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 10px #0006}
-.mpin b{position:absolute;left:-17px;top:-42px;width:34px;height:34px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
-.mpin u{position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;border:3px solid var(--c);animation:ping 1.4s ease-out infinite}
-@keyframes ping{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.5);opacity:0}}
-.mctl{position:absolute;right:8px;top:8px;display:grid;gap:6px}
-.mctl button{width:42px;height:42px;border-radius:12px;background:#fff;border:2px solid var(--line);font-size:22px;font-weight:700;text-align:center;line-height:1;box-shadow:0 2px 6px #0002}
-.mctl button svg{width:20px;height:20px;vertical-align:-3px}
-.mlabel{position:absolute;left:8px;right:8px;bottom:8px;background:#fff;border-radius:14px;padding:9px 10px 9px 12px;display:none;align-items:center;gap:10px;box-shadow:0 3px 12px #0003}
-.mlabel.show{display:flex}
-.mlabel .cb{flex:none}
-.mlabel .l{flex:1;min-width:0}
-.mlabel .l b{display:block;font-size:16.5px;font-weight:700;line-height:1.15}
-.mlabel .l span{display:block;font-size:13px;color:var(--ink2)}
-.mlabel button{flex:none;width:34px;height:34px;border-radius:50%;background:var(--soft);text-align:center;font-size:19px;font-weight:700}
-.cb{display:inline-grid;place-items:center;min-width:40px;height:30px;border-radius:9px;color:#fff;font-weight:700;font-size:13.5px;padding:0 7px;font-style:normal}
-.cats{display:flex;gap:6px;overflow-x:auto;padding:12px 0 10px;scrollbar-width:none}
+.mapi img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none;transition:opacity .2s}
+.mapi.dim img{opacity:.42}
+.mdot{position:absolute;width:0;height:0;transform:scale(var(--inv,1))}
+.mdot b{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;border:2.5px solid #fff;box-shadow:0 2px 6px #0005;display:grid;place-items:center;font-size:12px;font-weight:700}
+.mpin{position:absolute;width:0;height:0;transform:scale(var(--inv,1));z-index:2}
+.mpin i{position:absolute;left:-19px;top:-47px;width:38px;height:38px;border-radius:50% 50% 50% 0;background:var(--c);transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 10px #0006}
+.mpin b{position:absolute;left:-19px;top:-47px;width:38px;height:38px;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700}
+.mpin u{position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:50%;background:#FFDD2D55;border:3px solid #FFDD2D;animation:ping 1.5s ease-out infinite}
+@keyframes ping{0%{transform:scale(.35);opacity:1}100%{transform:scale(1.5);opacity:0}}
+#mlabels{position:absolute;inset:0;pointer-events:none}
+.mname{position:absolute;background:#fff;border-radius:8px;padding:2px 7px;font-size:11.5px;font-weight:700;line-height:16px;height:20px;white-space:nowrap;box-shadow:0 1px 4px #0004;color:var(--ink)}
+.mname.on{background:var(--ink);color:#fff}
+.mov{position:absolute;touch-action:auto}
+.mtop{left:10px;right:10px;top:10px}
+.mtop .search{margin:0;background:#fff;box-shadow:0 2px 10px #0003;height:50px}
+.mtop .search.has{border-color:var(--teal)}
+.mres{margin-top:6px;background:#fff;border-radius:16px;box-shadow:0 4px 16px #0004;overflow:auto;max-height:46vh;-webkit-overflow-scrolling:touch}
+.mres button{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:8px 12px;border-top:1px solid var(--line)}
+.mres button:first-child{border-top:0}
+.mres b{flex:1;min-width:0;font-size:16.5px;font-weight:700;line-height:1.15}
+.mres b small{display:block;font-size:12.5px;font-weight:600;color:var(--ink2)}
+.mres svg{width:20px;height:20px;flex:none;transform:rotate(-90deg)}
+.mres p{margin:0;padding:14px;color:var(--ink2);font-size:15px}
+.cats{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none;touch-action:pan-x}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;height:38px;border-radius:99px;border:2px solid var(--line);padding:0 13px;font-weight:700;font-size:14px;background:#fff;white-space:nowrap}
-.cats button.on{background:var(--ink);border-color:var(--ink);color:#fff}
-.mgh{font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink2);margin:14px 2px 6px}
-.place{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;border:2px solid var(--line);border-radius:14px;padding:7px 12px 7px 8px;margin-bottom:6px;background:#fff}
+.cats button{flex:none;height:38px;border-radius:99px;border:0;padding:0 14px;font-weight:700;font-size:14px;background:#fff;white-space:nowrap;box-shadow:0 1px 6px #0003}
+.cats button.on{background:var(--ink);color:#fff}
+.mctl{right:10px;top:122px;display:grid;gap:8px}
+.mctl button{width:46px;height:46px;border-radius:50%;background:#fff;font-size:24px;font-weight:700;text-align:center;line-height:1;box-shadow:0 2px 8px #0004}
+.mctl button svg{width:21px;height:21px;vertical-align:-3px}
+.msheet{left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -4px 18px #0003;padding:8px 14px 12px;display:none;max-height:46%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.msheet.show{display:block}
+.msheet .grab{width:44px;height:5px;border-radius:9px;background:#D5D9D7;margin:0 auto 8px}
+.msh-h{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.msh-h .l{flex:1;min-width:0}
+.msh-h .l b{display:block;font-size:21px;font-weight:700;line-height:1.1}
+.msh-h .l span{display:block;font-size:14px;color:var(--ink2)}
+.msh-h .x{flex:none;width:38px;height:38px;border-radius:50%;background:var(--soft);text-align:center;font-size:21px;font-weight:700}
+.msh-t{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2);margin:10px 2px 6px}
+.msh-s{background:var(--yellow-t);border-radius:12px;padding:8px 12px;font-size:14.5px;font-weight:600;margin-bottom:6px}
+.msheet .row{min-height:56px;margin-bottom:6px;padding:8px 10px 8px 12px}
+.msheet .row .l b{font-size:16px}
+.msheet .none{font-size:14.5px;color:var(--ink2);margin:4px 2px}
+.cb{display:inline-grid;place-items:center;min-width:44px;height:32px;border-radius:9px;color:#fff;font-weight:700;font-size:14px;padding:0 7px;font-style:normal;flex:none}
+.place{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;border:2px solid var(--line);border-radius:13px;padding:6px 10px 6px 7px;margin-bottom:6px;background:#fff}
 .place b{flex:1;min-width:0;font-size:16px;font-weight:600;line-height:1.15}
-.place.on{border-color:var(--ink);background:var(--soft)}
-.maphint{font-size:13px;color:var(--ink2);margin:8px 2px 0}
+.place svg{width:18px;height:18px;flex:none;transform:rotate(-90deg);color:var(--ink3)}
 
 /* tabs */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:2px solid var(--line);padding:8px 10px calc(8px + var(--safe-b))}
@@ -542,95 +564,161 @@ function schedHtml(dayKey, nowMin) {
 
 /* ---------- MAP ---------- */
 const M = { s: 1, tx: 0, ty: 0, sel: null, cat: "all", q: "", ready: false };
+const norm = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, "");
+// what the brief calls each stand (so "Oak Room", "Tres Amis" or "BMW" all find their pin) and which shots are there
+const ALIAS = {}, SHOTS_AT = {}, SECS_AT = {};
+const pushTo = (o, k, v) => { (o[k] = o[k] || []).push(v); };
+for (const [k, c] of Object.entries(WHERE)) if (!/^(sales|marketing)\|/.test(k)) pushTo(ALIAS, c, k.replace(/^Exhibitors \([^)]*\)\|/, ""));
+for (const [key, name] of [["marketing", "Marketing"], ["sales", "Sales"]]) for (const sec of LISTS[key]) {
+  if (sec.loc) pushTo(SECS_AT, sec.loc, { key, id: sec.id, title: sec.title, list: name });
+  for (const it of sec.items) if (it.loc) pushTo(SHOTS_AT, it.loc, { id: it.id, label: it.label, tag: name + " · " + sec.title });
+}
+for (const d of B.days) for (const q of (B.quick[d.key] || [])) if (q.loc && !(SHOTS_AT[q.loc] || []).some(x => x.id === q.id)) pushTo(SHOTS_AT, q.loc, { id: q.id, label: q.label, tag: "Quick turnaround · " + d.label });
+const EXTRA_WORDS = [[/washroom/i, "toilet wc restroom bathroom loo"], [/first aid/i, "medical medic doctor"], [/lounge & bar/i, "drinks alcohol beer bar"], [/main entrance/i, "gate entry exit"], [/box office/i, "tickets ticketing"], [/stage/i, "music band entertainment"], [/kids zone/i, "children rides play"], [/prayer/i, "mosque"]];
+const pinText = p => norm(p.name + " " + codeText(p.code) + " " + CAT[p.cat].name + " " + (ALIAS[p.code] || []).join(" ") + " " + EXTRA_WORDS.filter(w => w[0].test(p.name)).map(w => w[1]).join(" "));
+const PIN_TEXT = Object.fromEntries(PINS.map(p => [p.code, pinText(p)]));
+
 function frameMap() {
-  return `<div class="banner">${IC.map}<h2>Venue map</h2></div><div class="pad">
-    <label class="search" id="mSearch" style="margin-top:0">${IC.search}<input id="mq" type="search" inputmode="search" enterkeyhint="search" placeholder="Find a stand, restaurant, stage…" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(M.q)}"><button type="button" data-act="mclear" aria-label="Clear search">×</button></label>
-    <div class="mapv" id="mapv"><div class="mapi" id="mapi"><img src="${MAP.img}" alt="Venue map" draggable="false"><div id="mpins"></div></div>
-      <div class="mctl"><button type="button" data-act="mz" data-z="in" aria-label="Zoom in">+</button><button type="button" data-act="mz" data-z="out" aria-label="Zoom out">−</button><button type="button" data-act="mz" data-z="fit" aria-label="Whole venue">${IC.fit}</button></div>
-      <div class="mlabel" id="mlabel"></div></div>
-    <p class="maphint">Pinch or use + and − to zoom. Tap a number on the map to see what it is.</p>
-    <div class="cats" id="mcats"></div><div id="mlist"></div></div>`;
+  return `<div class="mapv" id="mapv">
+    <div class="mapi" id="mapi"><img src="${MAP.img}" alt="Venue map" draggable="false"><div id="mdots"></div><div id="mpins"></div></div>
+    <div id="mlabels"></div>
+    <div class="mov mtop"><label class="search" id="mSearch">${IC.search}<input id="mq" type="search" inputmode="search" enterkeyhint="search" placeholder="Find a stand, restaurant, stage…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(M.q)}"><button type="button" data-act="mclear" aria-label="Clear search">×</button></label>
+      <div id="mres"></div><div class="cats" id="mcats"></div></div>
+    <div class="mov mctl" id="mctl"><button type="button" data-act="mz" data-z="in" aria-label="Zoom in">+</button><button type="button" data-act="mz" data-z="out" aria-label="Zoom out">−</button><button type="button" data-act="mz" data-z="fit" aria-label="Whole venue">${IC.fit}</button></div>
+    <div class="mov msheet" id="msheet"></div></div>`;
 }
 const mapBox = () => { const v = $("#mapv"); return v ? { v, cw: v.clientWidth, ch: v.clientHeight, ih: v.clientWidth * MAP.h / MAP.w } : null; };
+function mapSize() {
+  const v = $("#mapv"); if (!v) return;
+  v.style.height = Math.max(300, window.innerHeight - (v.getBoundingClientRect().top + window.scrollY) - $(".tabs").offsetHeight) + "px";
+}
+let labelRaf = 0;
 function mapApply(anim) {
   const b = mapBox(); if (!b) return;
-  M.s = Math.min(8, Math.max(1, M.s));
+  M.s = Math.min(9, Math.max(1, M.s));
   const iw = b.cw * M.s, ih = b.ih * M.s;
   M.tx = iw <= b.cw ? (b.cw - iw) / 2 : Math.min(0, Math.max(b.cw - iw, M.tx));
-  M.ty = ih <= b.ch ? (b.ch - ih) / 2 : Math.min(0, Math.max(b.ch - ih, M.ty));
+  M.ty = ih <= b.ch ? (b.ch - ih) / 2 : Math.min(b.ch * 0.25, Math.max(b.ch * 0.6 - ih, M.ty));     // room to pull the edges clear of the sheet
   const el = $("#mapi"); el.classList.toggle("anim", !!anim);
   el.style.transform = `translate(${M.tx}px,${M.ty}px) scale(${M.s})`; el.style.setProperty("--inv", 1 / M.s);
+  if (anim) { $("#mlabels").innerHTML = ""; clearTimeout(labelRaf); labelRaf = setTimeout(mapLabels, 400); }
+  else { cancelAnimationFrame(labelRaf); labelRaf = requestAnimationFrame(mapLabels); }
+}
+// names under the markers once zoomed in; a label is skipped when it would sit on top of another
+function mapLabels() {
+  const b = mapBox(), L = $("#mlabels"); if (!b || !L) return;
+  if (M.s < 2.3) { L.innerHTML = ""; return; }
+  const placed = [], out = [], off = 0.0085 * b.cw * M.s + 3;
+  const order = PINS.filter(p => p.code === M.sel).concat(PINS.filter(p => p.code !== M.sel && (M.cat === "all" || p.cat === M.cat)));
+  for (const p of order) {
+    if ("AFG".includes(p.cat) || p.code === "ENT") continue;                       // already named on the map itself
+    const sx = M.tx + p.x * b.cw * M.s, sy = M.ty + p.y * b.ih * M.s;
+    if (sx < -40 || sx > b.cw + 40 || sy < 104 || sy > b.ch + 10) continue;      // not under the search bar and chips
+    const nm = p.name.replace(/^Abu Dhabi Motors – /, "").replace(/^Licensed lounge & bar.*/, "Bar"), text = nm.length > 20 ? nm.slice(0, 19).trim() + "…" : nm, w = text.length * 6.6 + 16;
+    const r = { x: sx - w / 2, y: sy + off, w, h: 20 };
+    if (placed.some(q => r.x < q.x + q.w + 3 && r.x + r.w + 3 > q.x && r.y < q.y + q.h + 2 && r.y + r.h + 2 > q.y)) continue;
+    placed.push(r); out.push(`<span class="mname${p.code === M.sel ? " on" : ""}" data-code="${p.code}" style="left:${r.x.toFixed(1)}px;top:${r.y.toFixed(1)}px;width:${w.toFixed(1)}px;text-align:center">${esc(text)}</span>`);
+  }
+  L.innerHTML = out.join("");
 }
 function mapFit(anim) {
   const b = mapBox(); if (!b) return; const [x0, y0, x1, y1] = MAP.view;
-  M.s = Math.min(b.cw / ((x1 - x0) * b.cw), b.ch / ((y1 - y0) * b.ih));
-  M.tx = b.cw / 2 - (x0 + x1) / 2 * b.cw * M.s; M.ty = b.ch / 2 - (y0 + y1) / 2 * b.ih * M.s; mapApply(anim);
+  M.s = Math.min(b.cw / ((x1 - x0) * b.cw), (b.ch - 110) / ((y1 - y0) * b.ih));
+  M.tx = b.cw / 2 - (x0 + x1) / 2 * b.cw * M.s; M.ty = 110 + (b.ch - 110) / 2 - (y0 + y1) / 2 * b.ih * M.s; mapApply(anim);
 }
 function mapZoom(f, cx, cy, anim) {
   const b = mapBox(); if (!b) return; if (cx == null) { cx = b.cw / 2; cy = b.ch / 2; }
-  const ns = Math.min(8, Math.max(1, M.s * f)), k = ns / M.s;
+  const ns = Math.min(9, Math.max(1, M.s * f)), k = ns / M.s;
   M.tx = cx - (cx - M.tx) * k; M.ty = cy - (cy - M.ty) * k; M.s = ns; mapApply(anim);
 }
-function mapPaintSel() {
+function mapPaintPins() {
   const p = M.sel && PIN[M.sel], c = p && CAT[p.cat];
   $("#mpins").innerHTML = p ? `<div class="mpin" style="left:${p.x * 100}%;top:${p.y * 100}%;--c:${c.color}"><u></u><i></i><b>${esc(codeText(p.code))}</b></div>` : "";
-  const l = $("#mlabel"); l.classList.toggle("show", !!p);
-  l.innerHTML = p ? `<i class="cb" style="background:${c.color}">${esc(codeText(p.code))}</i><span class="l"><b>${esc(p.name)}</b><span>${esc(c.name)}</span></span><button type="button" data-act="munsel" aria-label="Clear">×</button>` : "";
-  for (const r of document.querySelectorAll("#mlist .place")) r.classList.toggle("on", r.dataset.code === M.sel);
+  const cat = M.cat !== "all" && CAT[M.cat];
+  $("#mapi").classList.toggle("dim", !!cat);
+  $("#mdots").innerHTML = cat ? PINS.filter(x => x.cat === M.cat && x.code !== M.sel).map(x => `<div class="mdot" style="left:${x.x * 100}%;top:${x.y * 100}%;--c:${cat.color}"><b>${esc(codeText(x.code).replace(/^[A-Z]+(?=\d)/, ""))}</b></div>`).join("") : "";
 }
+function mapPaintTop() {
+  const q = norm(M.q), box = $("#mSearch"); if (!box) return;
+  box.classList.toggle("has", !!M.q);
+  $("#mcats").style.display = M.q ? "none" : "";
+  $("#mcats").innerHTML = [["all", "All"]].concat(MAP.cats.map(c => [c.key, c.name])).map(([k, l]) => `<button type="button" class="${M.cat === k ? "on" : ""}" data-act="mcat" data-k="${k}">${esc(l)}</button>`).join("");
+  if (!M.q) { $("#mres").innerHTML = ""; return; }
+  const hits = q ? PINS.filter(p => PIN_TEXT[p.code].includes(q)).sort((a, b) => (norm(b.name).startsWith(q) - norm(a.name).startsWith(q))).slice(0, 8) : [];
+  $("#mres").innerHTML = `<div class="mres">${hits.length ? hits.map(p => {
+    const al = (ALIAS[p.code] || []).find(a => norm(a).includes(q) && !norm(p.name).includes(q));
+    return `<button type="button" data-act="place" data-code="${p.code}"><i class="cb" style="background:${CAT[p.cat].color}">${esc(codeText(p.code))}</i><b>${esc(p.name)}<small>${esc(CAT[p.cat].name)}${al ? " · in the brief as “" + esc(al) + "”" : ""}</small></b>${IC.chev}</button>`;
+  }).join("") : `<p>Nothing on the map matches “${esc(M.q)}”.</p>`}</div>`;
+}
+function mapPaintSheet() {
+  const sh = $("#msheet"); if (!sh) return;
+  const keep = sh.scrollTop, p = M.sel && PIN[M.sel];
+  let h = "";
+  if (p) {
+    const c = CAT[p.cat], E = eff(), n = local(nowMs()), tk = todayKey();
+    h = `<div class="grab"></div><div class="msh-h"><i class="cb" style="background:${c.color}">${esc(codeText(p.code))}</i><div class="l"><b>${esc(p.name)}</b><span>${esc(c.name)}</span></div><button type="button" class="x" data-act="munsel" aria-label="Close">×</button></div>`;
+    for (const st of B.stages.filter(st => st.loc === p.code)) {
+      const day = (st.days[tk] || []).map(x => ({ start: x[0], end: x[3] || x[0] + st.dur, title: x[1] }));
+      const cur = day.find(x => n.min >= x.start && n.min < x.end), nx = day.find(x => x.start > n.min);
+      if (cur) h += `<div class="msh-s">On now: ${esc(cur.title)}${st.approx ? "" : " · until " + fmtMin(cur.end)}</div>`;
+      if (nx) h += `<div class="msh-s" style="background:var(--soft)">Next: ${fmtMin(nx.start)} ${esc(nx.title)}</div>`;
+    }
+    const shots = SHOTS_AT[p.code] || [], secs = SECS_AT[p.code] || [];
+    if (shots.length || secs.length) h += `<div class="msh-t">Shots here</div>`;
+    h += shots.map(x => rowHtml({ id: x.id, label: x.label }, E[x.id], esc(x.tag))).join("");
+    h += secs.map(x => `<button type="button" class="place" data-act="gosec" data-key="${x.key}" data-id="${esc(x.id)}"><b>${esc(x.list)} shots: ${esc(x.title)}</b>${IC.chev}</button>`).join("");
+    if (!shots.length && !secs.length) h += `<p class="none">No shot in the brief is tied to this spot.</p>`;
+  } else if (M.cat !== "all" && !M.q) {
+    const c = CAT[M.cat], ps = PINS.filter(x => x.cat === M.cat);
+    h = `<div class="grab"></div><div class="msh-h"><div class="l"><b>${esc(c.name)} <span style="display:inline;font-size:15px">· ${ps.length}</span></b></div><button type="button" class="x" data-act="mcat" data-k="all" aria-label="Close">×</button></div>` +
+      ps.map(x => `<button type="button" class="place" data-act="place" data-code="${x.code}"><i class="cb" style="background:${c.color}">${esc(codeText(x.code))}</i><b>${esc(x.name)}</b>${IC.chev}</button>`).join("");
+  }
+  sh.innerHTML = h; sh.classList.toggle("show", !!h); if (p) sh.scrollTop = keep;
+}
+function mapPaint() { mapPaintTop(); mapPaintPins(); mapPaintSheet(); mapLabels(); }
 function mapFocus(code, zoom) {
   const p = PIN[code], b = mapBox(); if (!p || !b) return;
   M.sel = code;
-  if (zoom) { M.s = Math.max(M.s, 3.6); M.tx = b.cw / 2 - p.x * b.cw * M.s; M.ty = b.ch * 0.42 - p.y * b.ih * M.s; mapApply(true); }
-  mapPaintSel();
-}
-function mapPaintList() {
-  const q = M.q.trim().toLowerCase();
-  $("#mSearch").classList.toggle("has", !!M.q);
-  $("#mcats").innerHTML = [["all", "All"]].concat(MAP.cats.map(c => [c.key, c.name])).map(([k, l]) => `<button type="button" class="${M.cat === k ? "on" : ""}" data-act="mcat" data-k="${k}">${esc(l)}</button>`).join("");
-  let h = "";
-  for (const c of MAP.cats) {
-    if (!q && M.cat !== "all" && M.cat !== c.key) continue;
-    const ps = PINS.filter(p => p.cat === c.key && (!q || (p.name + " " + codeText(p.code) + " " + c.name).toLowerCase().includes(q)));
-    if (!ps.length) continue;
-    h += `<div class="mgh">${esc(c.name)}</div>` + ps.map(p => `<button type="button" class="place${M.sel === p.code ? " on" : ""}" data-act="place" data-code="${p.code}"><i class="cb" style="background:${c.color}">${esc(codeText(p.code))}</i><b>${esc(p.name)}</b></button>`).join("");
-  }
-  $("#mlist").innerHTML = h || `<p class="empty">Nothing on the map matches “${esc(M.q)}”.</p>`;
+  if (zoom) { M.s = Math.max(M.s, 3.4); M.tx = b.cw / 2 - p.x * b.cw * M.s; M.ty = b.ch * 0.36 - p.y * b.ih * M.s; mapApply(true); }
+  mapPaint();
 }
 function mapInit() {
   const v = $("#mapv"); if (!v) return;
+  mapSize();
   const pts = new Map(); let st = null, moved = false, downAt = 0;
   const rel = e => { const r = v.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
   const snap = () => { const a = [...pts.values()]; st = { tx: M.tx, ty: M.ty, s: M.s, a: a.map(p => ({ ...p })), d: a.length > 1 ? Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) : 0 }; };
   v.addEventListener("pointerdown", e => {
-    if (e.target.closest(".mctl,.mlabel")) return;
+    if (e.target.closest(".mov")) return;                                        // search, chips, buttons and the sheet handle their own touches
+    if (document.activeElement && document.activeElement.id === "mq") document.activeElement.blur();
     try { v.setPointerCapture(e.pointerId); } catch (x) {}
     pts.set(e.pointerId, rel(e)); if (pts.size === 1) { moved = false; downAt = Date.now(); } else moved = true; snap(); $("#mapi").classList.remove("anim");
   });
   v.addEventListener("pointermove", e => {
     if (!pts.has(e.pointerId) || !st) return; pts.set(e.pointerId, rel(e)); const a = [...pts.values()];
-    if (a.length === 1) { const dx = a[0].x - st.a[0].x, dy = a[0].y - st.a[0].y; if (Math.abs(dx) + Math.abs(dy) > 7) moved = true; M.tx = st.tx + dx; M.ty = st.ty + dy; }
+    if (a.length === 1) { const dx = a[0].x - st.a[0].x, dy = a[0].y - st.a[0].y; if (Math.hypot(dx, dy) > 12) moved = true; if (!moved) return; M.tx = st.tx + dx; M.ty = st.ty + dy; }
     else if (a.length >= 2 && st.d) {
       const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y), mx = (a[0].x + a[1].x) / 2, my = (a[0].y + a[1].y) / 2, mx0 = (st.a[0].x + st.a[1].x) / 2, my0 = (st.a[0].y + st.a[1].y) / 2;
-      const ns = Math.min(8, Math.max(1, st.s * d / st.d)), k = ns / st.s; M.s = ns; M.tx = mx - (mx0 - st.tx) * k; M.ty = my - (my0 - st.ty) * k;
+      const ns = Math.min(9, Math.max(1, st.s * d / st.d)), k = ns / st.s; M.s = ns; M.tx = mx - (mx0 - st.tx) * k; M.ty = my - (my0 - st.ty) * k;
     }
     mapApply(false);
   });
   const up = e => {
     if (!pts.has(e.pointerId)) return; const p = pts.get(e.pointerId); pts.delete(e.pointerId);
     if (pts.size) return snap();
-    if (!moved && Date.now() - downAt < 450 && e.type === "pointerup") {          // a tap: which marker is here?
-      const b = mapBox(), fx = (p.x - M.tx) / (b.cw * M.s), fy = (p.y - M.ty) / (b.ih * M.s);
-      let best = null, bd = 0.024;
-      for (const q of PINS) { const d = Math.hypot(q.x - fx, (q.y - fy) * MAP.h / MAP.w); if (d < bd) { bd = d; best = q; } }
-      M.sel = best ? best.code : null; mapPaintSel();
-    }
+    if (moved || e.type !== "pointerup" || Date.now() - downAt > 600) return;
+    // a tap: the nearest marker within a finger's width (measured on screen, so it works at any zoom)
+    const b = mapBox(); let best = null, bd = 34;
+    for (const q of PINS) { const d = Math.hypot(M.tx + q.x * b.cw * M.s - p.x, M.ty + q.y * b.ih * M.s - p.y); if (d < bd) { bd = d; best = q; } }
+    for (const el of document.querySelectorAll("#mlabels .mname")) { const r = el.getBoundingClientRect(), vr = v.getBoundingClientRect(); if (p.x >= r.left - vr.left - 4 && p.x <= r.right - vr.left + 4 && p.y >= r.top - vr.top - 4 && p.y <= r.bottom - vr.top + 4) best = PIN[el.dataset.code]; }
+    M.sel = best ? best.code : null; mapPaint();
   };
   v.addEventListener("pointerup", up); v.addEventListener("pointercancel", up);
-  v.addEventListener("wheel", e => { e.preventDefault(); const p = rel(e); mapZoom(e.deltaY < 0 ? 1.18 : 1 / 1.18, p.x, p.y, false); }, { passive: false });
-  const img = v.querySelector("img"), first = () => { if (!M.ready) { M.ready = true; mapFit(false); } else mapApply(false); if (M.sel) mapFocus(M.sel, !!M.pendingZoom); M.pendingZoom = false; mapPaintSel(); };
-  if (img.complete && img.naturalWidth) first(); else img.addEventListener("load", first, { once: true });
-  requestAnimationFrame(first);
+  v.addEventListener("wheel", e => { if (e.target.closest(".mov")) return; e.preventDefault(); const p = rel(e); mapZoom(e.deltaY < 0 ? 1.18 : 1 / 1.18, p.x, p.y, false); }, { passive: false });
+  const img = v.querySelector("img"); let done = false;
+  const first = () => { if (done) return; done = true; mapSize(); if (!M.ready) { M.ready = true; mapFit(false); } else mapApply(false); if (M.sel) mapFocus(M.sel, !!M.pendingZoom); M.pendingZoom = false; mapPaint(); };
+  if (img.complete && img.naturalWidth) requestAnimationFrame(first); else { img.addEventListener("load", first, { once: true }); setTimeout(first, 1500); }
+  mapPaintTop();
 }
 function openMap(code) {
   M.sel = PIN[code] ? code : null; M.pendingZoom = true; M.q = ""; M.cat = "all";
@@ -696,15 +784,17 @@ function viewBrief() {
 function paintTabs() {
   const E = eff();
   $("#tabs").innerHTML = [["today", "Today"], ["marketing", "Marketing"], ["sales", "Sales"], ["map", "Map"], ["brief", "Brief"]].map(([k, l]) =>
-    `<button type="button" class="tab${S.tab === k ? " on" : ""}" data-act="tab" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${IC[k]}<u>${l}</u></button>`).join("");
+    `<button type="button" class="tab${S.tab === k ? " on" : ""}" data-act="tab" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${k === "map" ? IC.pin : IC[k]}<u>${l}</u></button>`).join("");
 }
 function render() {
   const view = $("#view");
+  if (S.tab !== "map") $(".app").classList.remove("maptab");
   if (S.tab === "marketing" || S.tab === "sales") {
     if (S.frame !== S.tab) { view.innerHTML = frameList(S.tab); S.frame = S.tab; }
     paintList(S.tab);
   } else if (S.tab === "map") {
-    if (S.frame !== "map") { view.innerHTML = frameMap(); S.frame = "map"; mapPaintList(); mapInit(); }
+    if (S.frame !== "map") { $(".app").classList.add("maptab"); view.innerHTML = frameMap(); S.frame = "map"; mapInit(); }
+    else mapPaintSheet();                                                        // a tick or a sync: refresh the "Shots here" rows
   } else { S.frame = null; view.innerHTML = S.tab === "brief" ? viewBrief() : viewToday(); }
   paintTabs();
 }
@@ -771,11 +861,12 @@ document.addEventListener("click", e => {
   if (a === "loc") { e.stopPropagation(); return openMap(el.dataset.code); }
   if (a === "tick") return toggle(el.dataset.id, el.dataset.label);
   if (a === "stage") { S.stage = el.dataset.k; S.schedOpen = true; return render(); }
-  if (a === "mz") { const z = el.dataset.z; return z === "fit" ? mapFit(true) : mapZoom(z === "in" ? 1.6 : 1 / 1.6, null, null, true); }
-  if (a === "mcat") { M.cat = el.dataset.k; return mapPaintList(); }
-  if (a === "place") { mapFocus(el.dataset.code, true); return $("#mapv").scrollIntoView({ block: "center", behavior: "smooth" }); }
-  if (a === "munsel") { M.sel = null; return mapPaintSel(); }
-  if (a === "mclear") { M.q = ""; $("#mq").value = ""; mapPaintList(); return $("#mq").focus(); }
+  if (a === "mz") { const z = el.dataset.z; return z === "fit" ? mapFit(true) : mapZoom(z === "in" ? 1.7 : 1 / 1.7, null, null, true); }
+  if (a === "mcat") { M.cat = el.dataset.k; M.sel = null; mapPaint(); if (M.cat !== "all") mapFit(true); return; }
+  if (a === "place") { M.q = ""; const i = $("#mq"); if (i) { i.value = ""; i.blur(); } return mapFocus(el.dataset.code, true); }
+  if (a === "munsel") { M.sel = null; return mapPaint(); }
+  if (a === "mclear") { M.q = ""; $("#mq").value = ""; mapPaint(); return $("#mq").focus(); }
+  if (a === "gosec") { S.open[el.dataset.id] = true; LS.set("open", S.open); S.filter[el.dataset.key] = "all"; return go(el.dataset.key); }
   if (a === "tab") return go(el.dataset.tab);
   if (a === "day") { S.day = el.dataset.day; return render(); }
   if (a === "filter") { S.filter[S.tab] = el.dataset.f; LS.set("filter", S.filter); sticky.clear(); return paintList(S.tab); }
@@ -792,10 +883,10 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("input", e => {
   if (e.target.id === "q") { S.q[S.tab] = e.target.value; sticky.clear(); paintList(S.tab); }
-  if (e.target.id === "mq") { M.q = e.target.value; mapPaintList(); }
+  if (e.target.id === "mq") { M.q = e.target.value; M.sel = null; mapPaint(); }
 });
 document.addEventListener("toggle", e => { if (e.target.id === "schedBox") S.schedOpen = e.target.open; }, true);
-window.addEventListener("resize", () => { if (S.tab === "map") mapApply(false); });
+window.addEventListener("resize", () => { if (S.tab === "map") { mapSize(); mapApply(false); } });
 document.addEventListener("keydown", e => { if ((e.target.id === "q" || e.target.id === "mq") && e.key === "Enter") e.target.blur(); });
 
 /* ---------- boot ---------- */
